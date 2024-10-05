@@ -12,7 +12,7 @@ import { useCurrentUser } from "./contexts/CurrentUserContext";
 import PostEditForm from "./pages/posts/PostEditForm";
 import ProfilePage from "./pages/profiles/ProfilePage";
 import UsernameForm from "./pages/profiles/UsernameForm";
-import UserPasswordForm from "./pages/profiles/UserPasswordForm";
+import UserPasswordForm from "./pages/profiles/UserPasswordForm.js";
 import ProfileEditForm from "./pages/profiles/ProfileEditForm";
 
 function App() {
