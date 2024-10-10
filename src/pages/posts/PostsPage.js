@@ -17,7 +17,6 @@ import NoResults from "../../assets/no-results.png";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchMoreData } from "../../utils/utils";
 import PopularProfiles from "../profiles/PopularProfiles";
-import { useCurrentUser } from "../../contexts/CurrentUserContext";
 
 function PostsPage({ message, filter = "" }) {
   const [posts, setPosts] = useState({ results: [] });
@@ -26,8 +25,6 @@ function PostsPage({ message, filter = "" }) {
 
   const [query, setQuery] = useState("");
 
-  const currentUser = useCurrentUser();
-
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -35,7 +32,7 @@ function PostsPage({ message, filter = "" }) {
         setPosts(data);
         setHasLoaded(true);
       } catch (err) {
-        // console.log(err);
+        console.log(err);
       }
     };
 
@@ -47,7 +44,7 @@ function PostsPage({ message, filter = "" }) {
     return () => {
       clearTimeout(timer);
     };
-  }, [filter, query, pathname, currentUser]);
+  }, [filter, query, pathname]);
 
   return (
     <Row className="h-100">
