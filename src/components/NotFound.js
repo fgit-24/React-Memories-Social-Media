@@ -1,15 +1,12 @@
 import React from "react";
-import NoResults from "../assets/no-results.png";
-import styles from "../styles/NotFound.module.css";
-import Asset from "./Asset";
+import Alert from "react-bootstrap/Alert";
 
 const NotFound = () => {
   return (
-    <div className={styles.NotFound}>
-      <Asset
-        src={NoResults}
-        message={`Sorry, the page you're looking for doesn't exist`}
-      />
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <Alert variant="info">
+        <p>Sorry, the page you are looking for does not exist</p>
+      </Alert>
     </div>
   );
 };

@@ -1,63 +1,62 @@
 import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
-
-import styles from "../../styles/SignInUpForm.module.css";
-import btnStyles from "../../styles/Button.module.css";
-import appStyles from "../../App.module.css";
-
-import {
-  Form,
-  Button,
-  Image,
-  Col,
-  Row,
-  Container,
-  Alert,
-} from "react-bootstrap";
+import Form from "react-bootstrap/Form";
+import Container from "react-bootstrap/Container";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
 import axios from "axios";
-import { useRedirect } from "../../hooks/useRedirect";
+import { Link, useNavigate } from "react-router-dom";
+import styles from "../../styles/SignUpForm.module.css";
 
 const SignUpForm = () => {
-  useRedirect("loggedIn");
-  const [signUpData, setSignUpData] = useState({
+  // Set initial form data
+  const [formData, setFormData] = useState({
     username: "",
     password1: "",
     password2: "",
   });
-  const { username, password1, password2 } = signUpData;
+  const { username, password1, password2 } = formData;
 
   const [errors, setErrors] = useState({});
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
+  // Handle form input changes
   const handleChange = (event) => {
-    setSignUpData({
-      ...signUpData,
+    setFormData({
+      ...formData,
       [event.target.name]: event.target.value,
     });
   };
 
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post("/dj-rest-auth/registration/", signUpData);
-      history.push("/signin");
+      await axios.post("/dj-rest-auth/registration/", formData);
+      navigate("/sign-in");
     } catch (err) {
       setErrors(err.response?.data);
     }
   };
 
   return (
-    <Row className={styles.Row}>
-      <Col className="my-auto py-2 p-md-2" md={6}>
-        <Container className={`${appStyles.Content} p-4 `}>
-          <h1 className={styles.Header}>sign up</h1>
-
-          <Form onSubmit={handleSubmit}>
+    <Container>
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6}>
+          <h2 className={`${styles.Header}`}>
+            Welcome to <span>Time</span>
+          </h2>
+        </Col>
+      </Row>
+      <Form onSubmit={handleSubmit}>
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6} className={`${styles.FormInputs}`}>
+            {/* Username input field with error messages below it */}
             <Form.Group controlId="username">
-              <Form.Label className="d-none">username</Form.Label>
+              <Form.Label visuallyHidden>Username</Form.Label>
               <Form.Control
-                className={styles.Input}
                 type="text"
                 placeholder="Username"
                 name="username"
@@ -70,11 +69,14 @@ const SignUpForm = () => {
                 {message}
               </Alert>
             ))}
-
+          </Col>
+        </Row>
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6} className={`${styles.FormInputs}`}>
+            {/* Password1 input field with error messages below it */}
             <Form.Group controlId="password1">
-              <Form.Label className="d-none">Password</Form.Label>
+              <Form.Label visuallyHidden>Password</Form.Label>
               <Form.Control
-                className={styles.Input}
                 type="password"
                 placeholder="Password"
                 name="password1"
@@ -83,58 +85,55 @@ const SignUpForm = () => {
               />
             </Form.Group>
             {errors.password1?.map((message, idx) => (
-              <Alert key={idx} variant="warning">
+              <Alert variant="warning" key={idx}>
                 {message}
               </Alert>
             ))}
-
+          </Col>
+        </Row>
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6} className={`${styles.FormInputs}`}>
+            {/* Password2 input field with error messages below it */}
             <Form.Group controlId="password2">
-              <Form.Label className="d-none">Confirm password</Form.Label>
+              <Form.Label visuallyHidden>Password again</Form.Label>
               <Form.Control
-                className={styles.Input}
                 type="password"
-                placeholder="Confirm password"
+                placeholder="Password again"
                 name="password2"
                 value={password2}
                 onChange={handleChange}
               />
             </Form.Group>
             {errors.password2?.map((message, idx) => (
-              <Alert key={idx} variant="warning">
+              <Alert variant="warning" key={idx}>
                 {message}
               </Alert>
             ))}
-
-            <Button
-              className={`${btnStyles.Button} ${btnStyles.Wide} ${btnStyles.Bright}`}
-              type="submit"
-            >
-              Sign up
+          </Col>
+        </Row>
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6}>
+            {/* Submit button with non-field errors messages below it */}
+            <Button variant="primary" type="submit">
+              Sign Up!
             </Button>
             {errors.non_field_errors?.map((message, idx) => (
-              <Alert key={idx} variant="warning" className="mt-3">
+              <Alert variant="warning" key={idx}>
                 {message}
               </Alert>
             ))}
-          </Form>
-        </Container>
-
-        <Container className={`mt-3 ${appStyles.Content}`}>
-          <Link className={styles.Link} to="/signin">
-            Already have an account? <span>Sign in</span>
-          </Link>
-        </Container>
-      </Col>
-      <Col
-        md={6}
-        className={`my-auto d-none d-md-block p-2 ${styles.SignUpCol}`}
-      >
-        <Image
-          className={`${appStyles.FillerImage}`}
-          src={"https://codeinstitute.s3.amazonaws.com/AdvancedReact/hero2.jpg"}
-        />
-      </Col>
-    </Row>
+          </Col>
+        </Row>
+      </Form>
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6}>
+          <p className={`${styles.SignInText}`}>
+            Already have an account? Then please,{" "}
+            <Link to="/sign-in">Sign In.</Link>
+          </p>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

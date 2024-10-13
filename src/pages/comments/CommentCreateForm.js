@@ -1,21 +1,26 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-
-import styles from "../../styles/CommentCreateEditForm.module.css";
-import Avatar from "../../components/Avatar";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { Link } from "react-router-dom";
 import { axiosRes } from "../../api/axiosDefaults";
+import Avatar from "../../components/Avatar";
+import ErrorToastNotification from "../../components/ErrorToastNotification";
+import styles from "../../styles/CommentCreateForm.module.css";
 
 function CommentCreateForm(props) {
   const { post, setPost, setComments, profileImage, profile_id } = props;
   const [content, setContent] = useState("");
 
+  const [commentErrorShow, setCommentErrorShow] = useState(false);
+
+  // Handle form input changes
   const handleChange = (event) => {
     setContent(event.target.value);
   };
 
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -23,10 +28,12 @@ function CommentCreateForm(props) {
         content,
         post,
       });
+      // Update the comments state by adding the new comment
       setComments((prevComments) => ({
         ...prevComments,
         results: [data, ...prevComments.results],
       }));
+      // Update the post state by incrementing the comments count
       setPost((prevPost) => ({
         results: [
           {
@@ -35,37 +42,54 @@ function CommentCreateForm(props) {
           },
         ],
       }));
+      // Clear the comment input after submission
       setContent("");
     } catch (err) {
-      console.log(err);
+      setCommentErrorShow(true);
+      setContent("");
     }
   };
 
   return (
-    <Form className="mt-2" onSubmit={handleSubmit}>
-      <Form.Group>
-        <InputGroup>
-          <Link to={`/profiles/${profile_id}`}>
-            <Avatar src={profileImage} />
-          </Link>
-          <Form.Control
-            className={styles.Form}
-            placeholder="my comment..."
-            as="textarea"
-            value={content}
-            onChange={handleChange}
-            rows={2}
-          />
-        </InputGroup>
-      </Form.Group>
-      <button
-        className={`${styles.Button} btn d-block ml-auto`}
-        disabled={!content.trim()}
-        type="submit"
-      >
-        post
-      </button>
-    </Form>
+    <>
+      <Row className="mb-3">
+        <Col>
+          {/* Display profile image */}
+          <Row className="justify-content-center">
+            <Col>
+              <Link to={`/profiles/${profile_id}`}>
+                <Avatar src={profileImage} height={30} />
+              </Link>
+            </Col>
+          </Row>
+          {/* Form for adding a comment */}
+          <Form onSubmit={handleSubmit} className="mt-2">
+            <Form.Group className="mb-2" controlId="comment">
+              <Form.Label visuallyHidden>Leave your comment here</Form.Label>
+              <Form.Control
+                className={`${styles.CommentContent}`}
+                as="textarea"
+                placeholder="Leave your comment here"
+                rows={2}
+                value={content}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Post Comment
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+
+      {/* Error Toast Notification for adding comments */}
+      <ErrorToastNotification
+        show={commentErrorShow}
+        onClose={() => setCommentErrorShow(false)}
+        position="bottom-end"
+        message="There was an error adding your comment!"
+      />
+    </>
   );
 }
 

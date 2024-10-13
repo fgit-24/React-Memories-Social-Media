@@ -1,48 +1,55 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React from "react";
+import { useState, useEffect, createContext, useContext, useMemo } from "react";
 import axios from "axios";
-import { axiosReq, axiosRes } from "../api/axiosDefaults";
-import { useHistory } from "react-router";
-import { removeTokenTimestamp, shouldRefreshToken } from "../utils/utils";
+import { axiosRes, axiosReq } from "../api/axiosDefaults";
+import { useNavigate } from "react-router-dom";
 
+// Create context for current user and context for setting current user
 export const CurrentUserContext = createContext();
 export const SetCurrentUserContext = createContext();
 
+// Custom hook to access current user context
 export const useCurrentUser = () => useContext(CurrentUserContext);
+// Custom hook to access set current user context
 export const useSetCurrentUser = () => useContext(SetCurrentUserContext);
 
 export const CurrentUserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const history = useHistory();
+  const navigate = useNavigate();
 
+  // Get and set current user when component mounts
   const handleMount = async () => {
     try {
-      const { data } = await axiosRes.get("dj-rest-auth/user/");
+      const { data } = await axiosRes.get("/dj-rest-auth/user/");
       setCurrentUser(data);
     } catch (err) {
-      console.log(err);
+      /* eslint-disable no-empty */
+      // This block is empty intentionally
     }
   };
 
+  // Call handleMount when component mounts
   useEffect(() => {
     handleMount();
   }, []);
 
+  // Axios response interceptor for token refresh
   useMemo(() => {
     axiosReq.interceptors.request.use(
       async (config) => {
-        if (shouldRefreshToken()) {
-          try {
-            await axios.post("/dj-rest-auth/token/refresh/");
-          } catch (err) {
-            setCurrentUser((prevCurrentUser) => {
-              if (prevCurrentUser) {
-                history.push("/signin");
-              }
-              return null;
-            });
-            removeTokenTimestamp();
-            return config;
-          }
+        if (!currentUser) {
+          return config;
+        }
+        try {
+          await axios.post("/dj-rest-auth/token/refresh/");
+        } catch (err) {
+          setCurrentUser((prevCurrentUser) => {
+            if (prevCurrentUser) {
+              navigate("/sign-in");
+            }
+            return null;
+          });
+          return config;
         }
         return config;
       },
@@ -54,26 +61,26 @@ export const CurrentUserProvider = ({ children }) => {
     axiosRes.interceptors.response.use(
       (response) => response,
       async (err) => {
-        if (err.response?.status === 401) {
+        if (err.response?.status === 401 && currentUser) {
           try {
             await axios.post("/dj-rest-auth/token/refresh/");
           } catch (err) {
             setCurrentUser((prevCurrentUser) => {
               if (prevCurrentUser) {
-                history.push("/signin");
+                navigate("/sign-in");
               }
               return null;
             });
-            removeTokenTimestamp();
           }
           return axios(err.config);
         }
         return Promise.reject(err);
       }
     );
-  }, [history]);
+  }, [currentUser, navigate]);
 
   return (
+    // Provide current user data through context to child components
     <CurrentUserContext.Provider value={currentUser}>
       <SetCurrentUserContext.Provider value={setCurrentUser}>
         {children}

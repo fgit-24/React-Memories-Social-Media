@@ -1,121 +1,182 @@
-import React from "react";
-import { Navbar, Container, Nav } from "react-bootstrap";
-import logo from "../assets/logo.png";
+import React, { useState } from "react";
 import styles from "../styles/NavBar.module.css";
-import { NavLink } from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import Offcanvas from "react-bootstrap/Offcanvas";
+import Alert from "react-bootstrap/Alert";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   useCurrentUser,
   useSetCurrentUser,
 } from "../contexts/CurrentUserContext";
-import Avatar from "./Avatar";
 import axios from "axios";
-import useClickOutsideToggle from "../hooks/useClickOutsideToggle";
-import { removeTokenTimestamp } from "../utils/utils";
+import useToggleNavBar from "../hooks/useToggleNavBar";
 
 const NavBar = () => {
-  const currentUser = useCurrentUser();
-  const setCurrentUser = useSetCurrentUser();
+  // Use hook to control the offcanvas menu
+  const { show, handleShow, handleClose } = useToggleNavBar();
 
-  const { expanded, setExpanded, ref } = useClickOutsideToggle();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [error, setError] = useState(null);
+
+  // Get current user from context
+  const currentUser = useCurrentUser();
+
+  // Set current user in context
+  const setCurrentUser = useSetCurrentUser();
 
   const handleSignOut = async () => {
     try {
       await axios.post("dj-rest-auth/logout/");
       setCurrentUser(null);
-      removeTokenTimestamp();
+      navigate("/?sign-out=success");
     } catch (err) {
-      console.log(err);
+      setError(err.response?.data);
     }
   };
 
-  const addPostIcon = (
-    <NavLink
-      className={styles.NavLink}
-      activeClassName={styles.Active}
-      to="/posts/create"
-    >
-      <i className="far fa-plus-square"></i>Add post
-    </NavLink>
-  );
-  const loggedInIcons = (
-    <>
-      <NavLink
-        className={styles.NavLink}
-        activeClassName={styles.Active}
-        to="/feed"
-      >
-        <i className="fas fa-stream"></i>Feed
-      </NavLink>
-      <NavLink
-        className={styles.NavLink}
-        activeClassName={styles.Active}
-        to="/liked"
-      >
-        <i className="fas fa-heart"></i>Liked
-      </NavLink>
-      <NavLink className={styles.NavLink} to="/" onClick={handleSignOut}>
-        <i className="fas fa-sign-out-alt"></i>Sign out
-      </NavLink>
-      <NavLink
-        className={styles.NavLink}
-        to={`/profiles/${currentUser?.profile_id}`}
-      >
-        <Avatar src={currentUser?.profile_image} text="Profile" height={40} />
-      </NavLink>
-    </>
-  );
+  // Display navigation links for logged out users
   const loggedOutIcons = (
     <>
       <NavLink
-        className={styles.NavLink}
-        activeClassName={styles.Active}
-        to="/signin"
+        className={({ isActive }) =>
+          isActive ? `${styles.NavLink} ${styles.active}` : styles.NavLink
+        }
+        to="/sign-in"
+        onClick={handleClose}
       >
-        <i className="fas fa-sign-in-alt"></i>Sign in
+        Sign in
       </NavLink>
       <NavLink
-        to="/signup"
-        className={styles.NavLink}
-        activeClassName={styles.Active}
+        className={({ isActive }) =>
+          isActive ? `${styles.NavLink} ${styles.active}` : styles.NavLink
+        }
+        to="/register"
+        onClick={handleClose}
       >
-        <i className="fas fa-user-plus"></i>Sign up
+        Register
       </NavLink>
+    </>
+  );
+
+  // Display navigation links for logged in users in a dropdown menu
+  const loggedInIcons = (
+    <>
+      <NavLink
+        className={({ isActive }) =>
+          isActive ? `${styles.NavLink} ${styles.active}` : styles.NavLink
+        }
+        to="/posts/create"
+        onClick={handleClose}
+      >
+        Add post
+      </NavLink>
+      <NavDropdown
+        title={currentUser?.username}
+        id="offcanvasNavbarDropdown"
+        className={styles.NavDropdown}
+        drop="down"
+        align="end"
+      >
+        <NavDropdown.Item
+          as={NavLink}
+          to={`/profiles/${currentUser?.profile_id}`}
+          className={`${styles.NavLink} ${
+            location.pathname.startsWith("/profiles") ? styles.active : ""
+          }`}
+          onClick={handleClose}
+        >
+          Profile
+        </NavDropdown.Item>
+
+        <NavDropdown.Item
+          as={NavLink}
+          to="/albums"
+          className={`${styles.NavLink} ${
+            location.pathname.startsWith("/albums") ? styles.active : ""
+          }`}
+          onClick={handleClose}
+        >
+          Albums
+        </NavDropdown.Item>
+
+        <NavDropdown.Item
+          as={NavLink}
+          to="/liked-posts"
+          className={`${styles.NavLink} ${
+            location.pathname === "/liked-posts" ? styles.active : ""
+          }`}
+          onClick={handleClose}
+        >
+          Liked Posts
+        </NavDropdown.Item>
+
+        <NavDropdown.Item
+          as={NavLink}
+          to="/"
+          onClick={() => {
+            handleSignOut();
+            handleClose();
+          }}
+          className={`${styles.NavLink} ${
+            location.pathname === "/" ? styles.active : ""
+          }`}
+        >
+          Sign out
+        </NavDropdown.Item>
+      </NavDropdown>
     </>
   );
 
   return (
-    <Navbar
-      expanded={expanded}
-      className={styles.NavBar}
-      expand="md"
-      fixed="top"
-    >
-      <Container>
-        <NavLink to="/">
-          <Navbar.Brand>
-            <img src={logo} alt="logo" height="45" />
+    <Navbar expand="md" sticky="top" className={`${styles.NavBar}`}>
+      <Container fluid>
+        {/* Brand text/logo here */}
+        <NavLink className={`${styles.BrandText}`} to="/">
+          <Navbar.Brand className={`${styles.BrandTextSize}`}>
+            Time
           </Navbar.Brand>
         </NavLink>
-        {currentUser && addPostIcon}
-        <Navbar.Toggle
-          ref={ref}
-          onClick={() => setExpanded(!expanded)}
-          aria-controls="basic-navbar-nav"
-        />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto text-left">
-            <NavLink
-              exact
-              className={styles.NavLink}
-              activeClassName={styles.Active}
-              to="/"
-            >
-              <i className="fas fa-home"></i>Home
-            </NavLink>
-
-            {currentUser ? loggedInIcons : loggedOutIcons}
-          </Nav>
-        </Navbar.Collapse>
+        {/* Toggle for offcanvas menu */}
+        <Navbar.Toggle aria-controls="offcanvasNavbar" onClick={handleShow} />
+        <Navbar.Offcanvas
+          show={show}
+          onHide={handleClose}
+          id="offcanvasNavbar"
+          aria-labelledby="offcanvasNavbarLabel"
+          placement="end"
+        >
+          <Offcanvas.Header closeButton>
+            <Offcanvas.Title id="offcanvasNavbarLabel">Menu</Offcanvas.Title>
+          </Offcanvas.Header>
+          <Offcanvas.Body>
+            <Nav className="justify-content-end flex-grow-1 pe-3">
+              <NavLink
+                className={({ isActive }) =>
+                  isActive
+                    ? `${styles.NavLink} ${styles.active}`
+                    : styles.NavLink
+                }
+                to="/"
+                onClick={handleClose}
+              >
+                Home
+              </NavLink>
+              {/* Display different navigation links based on user login status */}
+              {currentUser ? loggedInIcons : loggedOutIcons}
+            </Nav>
+            {/* Error message */}
+            {error && (
+              <Alert variant="danger" className="mt-3">
+                {error}
+              </Alert>
+            )}
+          </Offcanvas.Body>
+        </Navbar.Offcanvas>
       </Container>
     </Navbar>
   );

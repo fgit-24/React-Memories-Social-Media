@@ -1,55 +1,95 @@
-import React from "react";
-import styles from "../../styles/Profile.module.css";
-import btnStyles from "../../styles/Button.module.css";
+import React, { useEffect, useState } from "react";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { axiosReq } from "../../api/axiosDefaults";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCurrentUser } from "../../contexts/CurrentUserContext";
-import { Link } from "react-router-dom";
-import Avatar from "../../components/Avatar";
-import { Button } from "react-bootstrap";
-import { useSetProfileData } from "../../contexts/ProfileDataContext";
+import ImageAsset from "../../components/ImageAsset";
+import styles from "../../styles/Profile.module.css";
+import { ProfileOwnerDropdown } from "../../components/ProfileOwnerDropdown";
+import ErrorToastNotification from "../../components/ErrorToastNotification";
 
-const Profile = (props) => {
-  const { profile, mobile, imageSize = 55 } = props;
-  const { id, following_id, image, owner } = profile;
-
+function Profile() {
+  const { id } = useParams();
+  const [profile, setProfile] = useState(null);
+  const [errorShow, setErrorShow] = useState(false);
   const currentUser = useCurrentUser();
-  const is_owner = currentUser?.username === owner;
+  const is_owner = currentUser?.username === profile?.owner;
 
-  const { handleFollow, handleUnfollow } = useSetProfileData();
+  const navigate = useNavigate();
+
+  // Fetch profile
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data } = await axiosReq.get(`/profiles/${id}/`);
+        setProfile(data);
+      } catch (err) {
+        setErrorShow(true);
+      }
+    };
+
+    fetchProfile();
+  }, [id]);
+
+  const handleEdit = () => {
+    navigate(`/profiles/${id}/edit`);
+  };
 
   return (
-    <div
-      className={`my-3 d-flex align-items-center ${mobile && "flex-column"}`}
-    >
-      <div>
-        <Link className="align-self-center" to={`/profiles/${id}`}>
-          <Avatar src={image} height={imageSize} />
-        </Link>
-      </div>
-      <div className={`mx-2 ${styles.WordBreak}`}>
-        <strong>{owner}</strong>
-      </div>
-      <div className={`text-right ${!mobile && "ml-auto"}`}>
-        {!mobile &&
-          currentUser &&
-          !is_owner &&
-          (following_id ? (
-            <Button
-              className={`${btnStyles.Button} ${btnStyles.BlackOutline}`}
-              onClick={() => handleUnfollow(profile)}
-            >
-              unfollow
-            </Button>
+    <>
+      <Row>
+        <Col>
+          {/* Display profile image and owner */}
+          {profile ? (
+            <>
+              <Row className="d-flex justify-content-center align-items-center">
+                <Col xs={12} lg={8} className="d-flex justify-content-center">
+                  <div className={styles.ProfileImage}>
+                    <ImageAsset src={profile.image} />
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div className="d-flex justify-content-center align-items-center">
+                    <h2>{profile.owner}</h2>
+                    {/* Display owner dropdown if the current user is the profile owner */}
+                    {is_owner && (
+                      <div className="d-flex justify-content-center align-items-center">
+                        <ProfileOwnerDropdown handleEdit={handleEdit} />
+                      </div>
+                    )}
+                  </div>
+                </Col>
+              </Row>
+            </>
           ) : (
-            <Button
-              className={`${btnStyles.Button} ${btnStyles.Black}`}
-              onClick={() => handleFollow(profile)}
-            >
-              follow
-            </Button>
-          ))}
-      </div>
-    </div>
+            <div>Loading...</div>
+          )}
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          {/* Display profile bio if they have written one */}
+          {profile ? (
+            <>
+              <div className="d-flex justify-content-center align-items-center">
+                <p className={`${styles.BioText}`}>{profile.bio}</p>
+              </div>
+            </>
+          ) : null}
+        </Col>
+      </Row>
+      {/*Error Toast Notification on fetching profile data */}
+      <ErrorToastNotification
+        show={errorShow}
+        onClose={() => setErrorShow(false)}
+        position="bottom-end"
+        message="There was an error fetching the profile data"
+      />
+    </>
   );
-};
+}
 
 export default Profile;

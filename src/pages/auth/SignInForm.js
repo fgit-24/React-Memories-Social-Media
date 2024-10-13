@@ -1,125 +1,126 @@
 import React, { useState } from "react";
-import axios from "axios";
-
 import Form from "react-bootstrap/Form";
-import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import Image from "react-bootstrap/Image";
-import Container from "react-bootstrap/Container";
-
-import { Link, useHistory } from "react-router-dom";
-
-import styles from "../../styles/SignInUpForm.module.css";
-import btnStyles from "../../styles/Button.module.css";
-import appStyles from "../../App.module.css";
+import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
-import { useRedirect } from "../../hooks/useRedirect";
-import { setTokenTimestamp } from "../../utils/utils";
+import styles from "../../styles/SignInForm.module.css";
 
-function SignInForm() {
+const SignInForm = () => {
+  // Get function to set current user from context
   const setCurrentUser = useSetCurrentUser();
-  useRedirect("loggedIn");
 
-  const [signInData, setSignInData] = useState({
+  // Set initial form data
+  const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
-  const { username, password } = signInData;
+
+  const { username, password } = formData;
 
   const [errors, setErrors] = useState({});
 
-  const history = useHistory();
+  const navigate = useNavigate();
+
+  // Handle form input changes
+  const handleChange = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
-      const { data } = await axios.post("/dj-rest-auth/login/", signInData);
+      const { data } = await axios.post("/dj-rest-auth/login/", formData);
       setCurrentUser(data.user);
-      setTokenTimestamp(data);
-      history.goBack();
+      localStorage.setItem("showSignInToast", "true");
+      navigate("/");
     } catch (err) {
       setErrors(err.response?.data);
     }
   };
 
-  const handleChange = (event) => {
-    setSignInData({
-      ...signInData,
-      [event.target.name]: event.target.value,
-    });
-  };
-
   return (
-    <Row className={styles.Row}>
-      <Col className="my-auto p-0 p-md-2" md={6}>
-        <Container className={`${appStyles.Content} p-4 `}>
-          <h1 className={styles.Header}>sign in</h1>
-          <Form onSubmit={handleSubmit}>
+    <Container>
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6}>
+          <h2 className={`${styles.Header}`}>
+            Sign in to <span>Time</span>
+          </h2>
+        </Col>
+      </Row>
+      <Form onSubmit={handleSubmit}>
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6} className={`${styles.FormInputs}`}>
+            {/* Username input field with error messages below it */}
             <Form.Group controlId="username">
-              <Form.Label className="d-none">Username</Form.Label>
+              <Form.Label visuallyHidden>Username</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Username"
                 name="username"
-                className={styles.Input}
                 value={username}
                 onChange={handleChange}
               />
             </Form.Group>
             {errors.username?.map((message, idx) => (
-              <Alert key={idx} variant="warning">
+              <Alert variant="warning" key={idx}>
                 {message}
               </Alert>
             ))}
-
+          </Col>
+        </Row>
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6} className={`${styles.FormInputs}`}>
+            {/* Password input field with error messages below it */}
             <Form.Group controlId="password">
-              <Form.Label className="d-none">Password</Form.Label>
+              <Form.Label visuallyHidden>Password</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="Password"
                 name="password"
-                className={styles.Input}
                 value={password}
                 onChange={handleChange}
               />
             </Form.Group>
             {errors.password?.map((message, idx) => (
-              <Alert key={idx} variant="warning">
+              <Alert variant="warning" key={idx}>
                 {message}
               </Alert>
             ))}
-            <Button
-              className={`${btnStyles.Button} ${btnStyles.Wide} ${btnStyles.Bright}`}
-              type="submit"
-            >
-              Sign in
+          </Col>
+        </Row>
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6}>
+            {/* Submit button with non-field errors messages below it */}
+            <Button variant="primary" type="submit">
+              Sign In!
             </Button>
             {errors.non_field_errors?.map((message, idx) => (
-              <Alert key={idx} variant="warning" className="mt-3">
+              <Alert variant="warning" key={idx}>
                 {message}
               </Alert>
             ))}
-          </Form>
-        </Container>
-        <Container className={`mt-3 ${appStyles.Content}`}>
-          <Link className={styles.Link} to="/signup">
-            Don't have an account? <span>Sign up now!</span>
-          </Link>
-        </Container>
-      </Col>
-      <Col
-        md={6}
-        className={`my-auto d-none d-md-block p-2 ${styles.SignInCol}`}
-      >
-        <Image
-          className={`${appStyles.FillerImage}`}
-          src={"https://codeinstitute.s3.amazonaws.com/AdvancedReact/hero.jpg"}
-        />
-      </Col>
-    </Row>
+          </Col>
+        </Row>
+      </Form>
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6}>
+          <p className={`${styles.SignUpText}`}>
+            Don&apos;t have an account? Then please,{" "}
+            <Link to="/register">Register</Link>
+          </p>
+        </Col>
+      </Row>
+    </Container>
   );
-}
+};
 
 export default SignInForm;
