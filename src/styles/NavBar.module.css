@@ -1,51 +1,88 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
 .NavBar {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin: 0 10px 20px 10px;
+  backdrop-filter: blur(10px);
 }
 
 .BrandText {
   text-decoration: none;
   color: black;
-  text-decoration: none;
+  font-weight: bold;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: color 0.3s ease;
 }
 
-.BrandTextSize {
-  font-size: xx-large;
+.BrandText:hover {
+  color: #FF8C00;
 }
 
 .NavLink {
   text-decoration: none;
   color: black;
-  padding: 7px;
-  width: 100px;
-  transition: font-weight 0.2s;
+  padding: 10px 20px;
+  margin: 0 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .NavLink.active {
   font-weight: bold;
-}
-
-.NavDropdown .NavLink.active {
-  font-weight: bold;
-  background-color: white;
-  color: black;
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #FF8C00;
 }
 
 .NavLink:hover {
-  font-weight: 900;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #FF8C00;
+  font-weight: 600;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .NavDropdown {
-  padding-left: 7px;
   font-weight: 600;
-  transition: font-weight 0.2s;
+  padding-left: 10px;
+  position: relative;
 }
 
 .NavDropdown:hover {
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .NavDropdown .NavLink:hover {
-  font-weight: 900;
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #FF8C00;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .NavBar {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .NavLink {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 }
