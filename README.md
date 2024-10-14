@@ -2,6 +2,7 @@
 
 ![Am I responsive]()
 
+
 ## Introduction
 
 [Time](https://time-frontend-871b3764ee9c.herokuapp.com/) is a platform for sharing photos, designed for individuals who wish to showcase their images with others.
@@ -13,6 +14,7 @@ In addition to uploading your own content, all photos submitted to the website c
 The goal is to foster a sharing community where you can either contribute content or simply browse through the creations of others.
 
 You can also participate in the community by leaving comments and likes, as well as curating collections for yourself by adding posts to your private albums, making it easy to locate your favorite posts.
+
 
 ## Table of Contents
 
@@ -90,6 +92,7 @@ You can also participate in the community by leaving comments and likes, as well
     - [Websites](#websites)
     - [People](#people)
 
+
 ## User Personas
 
 - The **casual user**, enjoys browsing through stunning photos for relaxation and inspiration.
@@ -110,6 +113,7 @@ You can also participate in the community by leaving comments and likes, as well
   The platform provides them with straightforward upload options and visibility.
 
   Being able to organize their own and others' content into albums is a significant advantage.
+
 
 ## User Stories
 
@@ -192,6 +196,7 @@ For a complete overview, please refer to the Project link. Here’s a brief summ
 
   - As a Site User, I can view the posts I have added to my albums, making it easy to locate specific content.
 
+
 ## User Goals
 
 ### The Casual
@@ -214,6 +219,7 @@ The enthusiast is motivated by curating beautiful works.
 
 They take pride in discovering outstanding pieces and organizing them into albums.
 
+
 ## Website Owner Goals
 
 Here’s a rephrased version of your text while keeping the original meaning and markdown formatting:
@@ -227,6 +233,7 @@ This could lead to higher ad revenues and potential subscription options.
 Any added features must be chosen carefully to avoid alienating existing users.
 
 The website needs to function well on both mobile devices and larger screens for user convenience.
+
 
 ## Design
 
@@ -284,6 +291,7 @@ This is the albums page, where users can manage their albums.
 On the profile page, is the users photo of choice, their username and a bio, followed by all their posts.
 
 ![Profile Page]()
+
 
 ## Features
 
@@ -365,6 +373,7 @@ On the profile page, is the users photo of choice, their username and a bio, fol
 
 ![User Profiles]()
 
+
 ## Features to Add
 
 This is a list of features I would have liked to implement, but they were not included in the scope of this project. Additionally, this list is certainly not exhaustive.
@@ -378,6 +387,7 @@ This is a list of features I would have liked to implement, but they were not in
   If an album is given a title that already exists in their collection, such as "Album," the new one could be automatically renamed to "Album(1)," for instance.
 
 - **Editing Posts in Albums**: Currently, there is no functionality for moving posts between albums or removing a post from an album. While albums can be renamed or deleted and a post can be added to multiple albums, the ability to transfer or delete a post from an album is not yet available. This is definitely a feature I would consider adding in the future.
+
 
 ## React Components
 
@@ -473,11 +483,13 @@ The profiles section consists of three components.
 
 - **ProfileEditForm**: A form for updating profile information.
 
+
 ## Framework and Languages
 
 This project was developed using React 18.3.1, with JavaScript and JSX employed for coding.
 
 The README is written in Markdown.
+
 
 ## Libraries
 
@@ -488,6 +500,7 @@ The README is written in Markdown.
 - **React-router-dom**: Used for routing capabilities and additional features such as `searchParams`, `useLocation`, and `useNavigate`. This was particularly beneficial for implementing toast notifications and navigating between pages.
 
 - **React-infinite-scroll-component**: Since my API provides paginated data, this library was instrumental in establishing a continuous feed for users.
+
 
 ## Deployment
 
@@ -513,11 +526,11 @@ This section outlines the steps I took to deploy this React project.
 
 ### Cloning and Forking
 
-If you wish to clone or fork this project, you can do so from my [GitHub repository]().
+If you wish to clone or fork this project, you can do so from my [GitHub repository](https://time-frontend-871b3764ee9c.herokuapp.com/).
 
 Please note that this is only the front-end; you will need a back-end to run the application.
 
-Refer to the [Back-end repository]() for more details on setting that up.
+Refer to the [Back-end repository](https://pp5-api-f-176f17fcc3bf.herokuapp.com/) for more details on setting that up.
 
 It’s advisable to start by setting up a virtual environment to avoid conflicts and potential issues.
 
@@ -530,6 +543,7 @@ It’s advisable to start by setting up a virtual environment to avoid conflicts
 - Ensure you are in the root directory, then run `npm install`.
 
 - In the `src` directory, open `axiosDefaults.js` and update `axios.defaults.baseURL` to your own API URL.
+
 
 ## Testing
 
@@ -1027,15 +1041,20 @@ Finally the issue for each user story in my project has been closed if the accep
 | When clicked, they get a form where information can be edited          |  X  |     |
 | When form is submitted, their profile is updated                       |  X  |     |
 
+
 ## Bugs
 
 ### Bug
 
 ![Bug]()
 
+
 ## Bug Fixes
 
 ### Bug Fix
+
+![Bug]()
+
 
 ## Credits
 
@@ -1063,10 +1082,10 @@ The similarities stem from functional requirements and the original code effecti
 
 ### Websites
 
-I used [favicon.io](https://favicon.io/) to create my favicon.
-
 This [Stack Overflow]() page provided valuable insights that helped me implement searchParams successfully.
 
-[am I responsive](https://ui.dev/amiresponsive) was utilized for generating the images of my website, which are placed at the top of this README.
+I used [favicon.io](https://favicon.io/) to create my favicon.
+
+[Am I responsive](https://ui.dev/amiresponsive) was utilized for generating the images of my website, which are placed at the top of this README.
 
 ### People
