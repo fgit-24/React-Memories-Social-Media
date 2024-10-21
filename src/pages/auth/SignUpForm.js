@@ -46,7 +46,7 @@ const SignUpForm = () => {
       <Row className="justify-content-center">
         <Col xs={12} md={8} lg={6}>
           <h2 className={`${styles.Header}`}>
-            Welcome to <span>Time</span>
+            Welcome to <span>Social</span>
           </h2>
         </Col>
       </Row>

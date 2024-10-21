@@ -52,7 +52,7 @@ const SignInForm = () => {
       <Row className="justify-content-center">
         <Col xs={12} md={8} lg={6}>
           <h2 className={`${styles.Header}`}>
-            Sign in to <span>Time</span>
+            Sign in to <span>Social</span>
           </h2>
         </Col>
       </Row>

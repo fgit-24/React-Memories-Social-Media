@@ -138,7 +138,7 @@ const NavBar = () => {
         {/* Brand text/logo here */}
         <NavLink className={`${styles.BrandText}`} to="/">
           <Navbar.Brand className={`${styles.BrandTextSize}`}>
-            Time
+            Social
           </Navbar.Brand>
         </NavLink>
         {/* Toggle for offcanvas menu */}

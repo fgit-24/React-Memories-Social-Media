@@ -18,7 +18,7 @@ You can also participate in the community by leaving comments and likes, as well
 
 ## Table of Contents
 
-- [tTime](#Time)
+- [Time](#Time)
   - [Introduction](#introduction)
   - [Table of Contents](#table-of-contents)
   - [User Personas](#user-personas)
