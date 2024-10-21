@@ -47,5 +47,9 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.2",
     "globals": "^15.4.0"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
   }
 }
