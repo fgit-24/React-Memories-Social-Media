@@ -10,6 +10,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
 import styles from "../../styles/SignInForm.module.css";
 
+// Enable sending cookies with every request
+axios.defaults.withCredentials = true;
+
 const SignInForm = () => {
   // Get function to set current user from context
   const setCurrentUser = useSetCurrentUser();
@@ -23,7 +26,6 @@ const SignInForm = () => {
   const { username, password } = formData;
 
   const [errors, setErrors] = useState({});
-
   const navigate = useNavigate();
 
   // Handle form input changes
@@ -38,11 +40,13 @@ const SignInForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      // Post request to the login endpoint
       const { data } = await axios.post("/dj-rest-auth/login/", formData);
-      setCurrentUser(data.user);
-      localStorage.setItem("showSignInToast", "true");
-      navigate("/");
+      setCurrentUser(data.user); // Set the current user from response
+      localStorage.setItem("showSignInToast", "true"); // Optionally store in local storage
+      navigate("/"); // Redirect after login
     } catch (err) {
+      // Set errors from the response if login fails
       setErrors(err.response?.data);
     }
   };
@@ -68,6 +72,7 @@ const SignInForm = () => {
                 name="username"
                 value={username}
                 onChange={handleChange}
+                required // Ensure field is required
               />
             </Form.Group>
             {errors.username?.map((message, idx) => (
@@ -88,6 +93,7 @@ const SignInForm = () => {
                 name="password"
                 value={password}
                 onChange={handleChange}
+                required // Ensure field is required
               />
             </Form.Group>
             {errors.password?.map((message, idx) => (

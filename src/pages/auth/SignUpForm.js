@@ -19,7 +19,6 @@ const SignUpForm = () => {
   const { username, password1, password2 } = formData;
 
   const [errors, setErrors] = useState({});
-
   const navigate = useNavigate();
 
   // Handle form input changes
@@ -62,6 +61,7 @@ const SignUpForm = () => {
                 name="username"
                 value={username}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
             {errors.username?.map((message, idx) => (
@@ -82,6 +82,7 @@ const SignUpForm = () => {
                 name="password1"
                 value={password1}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
             {errors.password1?.map((message, idx) => (
@@ -102,6 +103,7 @@ const SignUpForm = () => {
                 name="password2"
                 value={password2}
                 onChange={handleChange}
+                required
               />
             </Form.Group>
             {errors.password2?.map((message, idx) => (
