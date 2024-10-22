@@ -41,7 +41,7 @@ export const CurrentUserProvider = ({ children }) => {
           return config;
         }
         try {
-          await axios.post("/dj-rest-auth/token/refresh/");
+          await axios.post("/dj-rest-auth/token/refresh/", {}, { withCredentials: true });
         } catch (err) {
           setCurrentUser((prevCurrentUser) => {
             if (prevCurrentUser) {
@@ -63,7 +63,7 @@ export const CurrentUserProvider = ({ children }) => {
       async (err) => {
         if (err.response?.status === 401 && currentUser) {
           try {
-            await axios.post("/dj-rest-auth/token/refresh/");
+            await axios.post("/dj-rest-auth/token/refresh/", {}, { withCredentials: true });
           } catch (err) {
             setCurrentUser((prevCurrentUser) => {
               if (prevCurrentUser) {
