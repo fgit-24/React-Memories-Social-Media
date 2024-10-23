@@ -19,9 +19,10 @@ function PostCreateForm() {
   const [postData, setPostData] = useState({
     title: "",
     content: "",
+    tags: "",
     image: "",
   });
-  const { title, content } = postData; // Removed tags from destructuring
+  const { title, content, tags, image } = postData;
 
   // Ref to the image input to handle uploads
   const imageInput = useRef(null);
@@ -43,11 +44,11 @@ function PostCreateForm() {
     });
   };
 
-  // Handle image upload, sets image URL in state
+  // Handle image upload, sets image url in state
   const handleChangeImage = (event) => {
     if (event.target.files.length) {
-      // Revoke previous image URL
-      URL.revokeObjectURL(postData.image);
+      // Revoke previous image url
+      URL.revokeObjectURL(image);
       setPostData({
         ...postData,
         image: URL.createObjectURL(event.target.files[0]),
@@ -58,17 +59,12 @@ function PostCreateForm() {
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
     // Create form data to send and append data
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
-
-    // Handle image upload
-    if (imageInput.current.files.length) {
-      formData.append("image", imageInput.current.files[0]);
-    }
-
+    formData.append("image", imageInput.current.files[0]);
+    formData.append("tags", tags);
     try {
       const { data } = await axiosReq.post("/posts/", formData);
       localStorage.setItem("showPostCreateToast", "true");
@@ -82,7 +78,7 @@ function PostCreateForm() {
 
   return (
     <Container className="mb-5">
-      <Form onSubmit={handleSubmit} encType="multipart/form-data"> {/* Ensure the enctype is set */}
+      <Form onSubmit={handleSubmit}>
         {/* Title form input */}
         <Row className="justify-content-center">
           <Col xs={12} md={8} lg={6}>
@@ -127,12 +123,33 @@ function PostCreateForm() {
           </Col>
         </Row>
 
+        {/* Tags form input */}
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6}>
+            <Form.Group controlId="tags" className="mb-3">
+              <Form.Label visuallyHidden>Tags</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Tags"
+                name="tags"
+                value={tags}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            {errors.tags?.map((message, idx) => (
+              <Alert variant="warning" key={idx}>
+                {message}
+              </Alert>
+            ))}
+          </Col>
+        </Row>
+
         {/* Image upload */}
         <Row className="justify-content-center">
           <Col xs={12} md={8} lg={6}>
             <Form.Group controlId="image" className="mb-3">
               <Form.Label className={`${styles.LabelText}`}>
-                Image formats supported are jpg, jpeg, and png. Images larger
+                Image formats supported are jpg, jpeg and png. Images larger
                 than 5MB will not be accepted.
               </Form.Label>
               <Form.Control
@@ -153,7 +170,7 @@ function PostCreateForm() {
         {/* Display preview image */}
         <Row className="justify-content-center">
           <Col xs={12} md={8} lg={6}>
-            {postData.image && <ImageAsset src={postData.image} alt={title} />}
+            {image && <ImageAsset src={image} alt={title} />}
           </Col>
         </Row>
 
